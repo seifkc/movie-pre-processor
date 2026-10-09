@@ -1,314 +1,80 @@
-"""
-Text parsing functions for cleaning movie description text.
-
-This module contains functions to transform raw text into cleaned text
-suitable for natural language processing tasks like clustering.
-"""
+"""Text parsing functions for cleaning movie description text."""
 
 from string import punctuation
 
 
 def load_stopwords(filepath='data/stopwords.txt'):
-    """
-    Loads stopwords from a text file into a set.
-
-    Stopwords are common words like 'the', 'a', 'and' that don't add
-    much meaning to text analysis and are often removed.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to the stopwords file (one word per line)
-
-    Returns
-    -------
-    stopwords : set of str
-        A set containing all stopwords (lowercase)
-
-    Examples
-    --------
-    >>> stopwords = load_stopwords('data/stopwords.txt')
-    >>> 'the' in stopwords
-    True
-    """
-    with open(filepath, 'r', encoding='utf-8') as f:
-        # Read all lines, strip whitespace, and convert to set
-        return set(line.strip().lower() for line in f if line.strip())
+    """Load stopwords from a text file into a set."""
+    stopwords = set()
+    with open(filepath, 'r', encoding='utf-8') as file:
+        for line in file:
+            word = line.strip().lower()
+            if word:
+                stopwords.add(word)
+    return stopwords
 
 
 def lowercase_text(text):
-    """
-    Returns a text string with all characters lower-cased.
-
-    Parameters
-    ----------
-    text: str
-
-    Returns
-    -------
-    text_lowercased: str
-
-    Examples
-    --------
-    >>> lowercase_text('AbC')
-    'abc'
-    """
+    """Return a text string with all characters lower-cased."""
     return text.lower()
 
 
-def remove_punctuation(text, punctuation=punctuation):
-    """
-    Returns a text string without punctuation.
-
-    Hint: You can iterate through each character in the punctuation string
-    and replace it with an empty string '', or use a different approach
-    with string methods.
-
-    Parameters
-    ----------
-    text: str
-    punctuation: str
-        A string containing all the punctuation characters to remove.
-
-    Returns
-    -------
-    text_nopunct: str
-
-    Examples
-    --------
-    >>> remove_punctuation("here's johnny!")
-    'heres johnny'
-    """
-    # TODO: Your code here
-    # Hint: Loop through each punctuation character and replace it
-    for character in punctuation:
-        text = text.replace(character, ' ')
+def remove_punctuation(text, punctuation_chars=punctuation):
+    """Return a text string without punctuation characters."""
+    for character in punctuation_chars:
+        text = text.replace(character, '')
     return text
 
+
 def remove_newline(text):
-    """
-    Removes all newlines in a line of text.
-
-    Newlines are represented as '\n' in strings. You can use the
-    .replace() method or .strip() method to handle them.
-
-    Parameters
-    ----------
-    text: str
-
-    Returns
-    -------
-    text_no_nl: str
-
-    Examples
-    --------
-    >>> remove_newline("\nlife happens when youre busy\n making other plans\n")
-    'life happens when youre busy making other plans'
-    """
-    # TODO: Your code here
+    """Remove newline characters and trim leading/trailing whitespace."""
     return text.replace('\n', '').strip()
 
 
 def split_text_into_words(text):
-    """
-    Splits a text string into a word list.
-
-    This function breaks text into individual words. Python strings
-    have a built-in method that does exactly this!
-
-    Parameters
-    ----------
-    text: str
-
-    Returns
-    -------
-    words: list of str
-
-    Examples
-    --------
-    >>> split_text_into_words("get started by stop talking and begin doing")
-    ['get', 'started', 'by', 'stop', 'talking', 'and', 'begin', 'doing']
-    """
-    # TODO: Your code here
+    """Split a text string into a list of words."""
     return text.split()
 
 
 def remove_stopwords(word_lst, stopwords_set):
-    """
-    Removes words from word_lst if they appear in the stopwords_set.
-
-    Stopwords are common words that don't add meaning to analysis.
-    This function filters them out.
-
-    Parameters
-    ----------
-    word_lst: list of str
-    stopwords_set: set of str
-
-    Returns
-    -------
-    word_lst_no_sw: list of str
-
-    Examples
-    --------
-    >>> remove_stopwords(['tell', 'me', 'and', 'i', 'forget'],
-                         set(['and', 'i']))
-
-    ['tell', 'me', 'forget']
-    """
-    # TODO: Your code here
-    words_not_stopwords = []
-    for word in word_lst:
-        if word not in stopwords_set:
-            words_not_stopwords.append(word)
-    return words_not_stopwords
+    """Remove words that are present in the stopwords set."""
+    return [word for word in word_lst if word not in stopwords_set]
 
 
 def replace_names(word_lst, name_set, replacement_val):
-    """
-    Replaces names in word_lst with replacement_val.
-
-    Names are identified by checking if they appear in the name_set.
-
-    Parameters
-    ----------
-    word_lst: list of str
-    name_set: set of str
-    replacement_val: str
-        The string to replace the names with.
-
-    Returns
-    -------
-    word_lst_replaced_names: list of str
-
-    Examples
-    --------
-    >>> replace_names(['daryl', 'larry','bob'],
-                      set(['larry', 'daryl']),
-                      'person')
-
-    ['person', 'person','bob']
-    """
-    # TODO: Your code here
-    # Hint: Use a list comprehension with a conditional
-    # If word is in name_set, use replacement_val, otherwise use word
-    replaced_names = []
-    for word in word_lst:
-        if word in name_set:
-            replaced_names.append(replacement_val)
-        else:
-            replaced_names.append(word)
-    return replaced_names
+    """Replace names from a set with a placeholder value."""
+    return [replacement_val if word in name_set else word for word in word_lst]
 
 
 def create_cleaned_textline_from_words(words):
-    """
-    Makes a single string from a list of words.
-
-    This function joins words back together into a single line of text.
-
-    Parameters
-    ----------
-    words: list of str
-
-    Returns
-    -------
-    cleaned_text: str
-
-    Examples
-    --------
-    >>> create_cleaned_textline_from_words(
-            ['darkest', 'moments', 'focus', 'light']
-        )
-    'darkest moments focus light'
-    """
-    # TODO: Your code here
-    # Hint: Use the .join() method
+    """Join a list of words back into a single line of text."""
     return ' '.join(words)
 
 
 def line_cleaning_pipeline(text, stopwords_set, name_set, replace_val):
-    """
-    Transforms raw text into clean text using text-cleaning functions above.
-
-    This function applies all the cleaning steps in sequence:
-    1. Lowercase the text
-    2. Remove punctuation
-    3. Remove newlines
-    4. Split into words
-    5. Remove stopwords
-    6. Replace names
-    7. Join back into a single line
-
-    Parameters
-    ----------
-    text: str
-        The raw text to clean
-    stopwords_set: set of str
-        Set of common words to remove
-    name_set: set of str
-        Set of names to replace
-    replace_val: str
-        What to replace names with (e.g., 'person')
-
-    Returns
-    -------
-    line_of_text_cleaned: str
-        The cleaned text
-    """
+    """Apply the full sequence of cleaning steps to a single text line."""
     text_lc = lowercase_text(text)
     text_np = remove_punctuation(text_lc)
     text_nnl = remove_newline(text_np)
     words = split_text_into_words(text_nnl)
     words_nsw = remove_stopwords(words, stopwords_set)
     words_cleaned = replace_names(words_nsw, name_set, replace_val)
-    line_of_text_cleaned = create_cleaned_textline_from_words(words_cleaned)
-    return line_of_text_cleaned
+    return create_cleaned_textline_from_words(words_cleaned)
 
 
 if __name__ == '__main__':
-    # Load stopwords from file
     stopwords = load_stopwords('data/stopwords.txt')
     names = {
-        'Seokwoo',
-        'Suan',
+        'seokwoo',
+        'suan',
         'yonsuk',
-        'Valencia',
-        'Marcel',
-        'Layla'
+        'seongkyeong',
+        'ingil',
+        'yonghuk',
+        'jinhee'
     }
-replacement = 'person'
+    replacement = 'person'
 
-    # Test strings to help you test your functions
-text_str1 =("Seok-woo, a divorced fund manager, is a workaholic and "
-                 "absentee father to \nhis")
-text_str2 =("young daughter, Su-an. For her birthday the next day, "
-                 "she wishes for her father\n")
-text_str3 =("to take her to Busan to see her mother. \n"
-                 "They board the KTX at Seoul Station.")
-
-    # Example: Testing the lowercase function
-
-text = text_str1
-text_lc = lowercase_text(text)
-print(f"Original: {text}")
-print(f"Lowercased: {text_lc}.")
-
-    # TODO: Add your own tests below as you implement each function
-    # Example for testing remove_punctuation:
-
-text_lc = lowercase_text(text)
-text_no_punct = remove_punctuation(text_lc)
-print(f"No punctuation: {text_no_punct}")
-text_no_new_line = remove_newline(text_no_punct)
-print(f"No new lines: {text_no_new_line}")
-words = split_text_into_words(text_no_new_line)
-print (f"Words: {words}")
-words_no_stopwords = remove_stopwords(words, stopwords)
-print(f"Without stopwords: {words_no_stopwords}")
-words_name_replace = replace_names(words_no_stopwords,
-    names,
-    replacement)
-print (f" Names replaced: {words_name_replace}")
-clean_text = create_cleaned_textline_from_words(words_name_replace)
-print (f" Cleaned text: {clean_text}")
+    text = "pregnant wife Seong-kyeong, a high school baseball team, rich-yet-egotistical"
+    cleaned = line_cleaning_pipeline(text, stopwords, names, replacement)
+    print(cleaned)
